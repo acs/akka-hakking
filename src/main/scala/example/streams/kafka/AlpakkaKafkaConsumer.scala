@@ -30,8 +30,9 @@ object AlpakkaKafkaConsumer extends App {
       .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
 
   val topic = "alpakkaString"
+  val topicAvro = "alpakkaCountryCapitals"
 
-  val source = Consumer.committableSource(consumerSettings, Subscriptions.topics(topic))
+  val source = Consumer.committableSource(consumerSettings, Subscriptions.topics(topicAvro))
 
   val done: Future[Done] =
     source
@@ -39,7 +40,7 @@ object AlpakkaKafkaConsumer extends App {
       .runForeach(println)
 
   done.onComplete(_ => {
-    println(s"All events have been read from $topic in Kafka")
+    println(s"All events have been read from $topicAvro in Kafka")
     system.terminate()
   })
 }
