@@ -18,6 +18,7 @@ import akka.stream.scaladsl.GraphDSL
 import akka.stream.scaladsl.RunnableGraph
 import akka.stream.scaladsl.Sink
 import com.sksamuel.avro4s.AvroInputStream
+import com.sksamuel.avro4s.AvroSchema
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -40,14 +41,15 @@ object AlpakkaKafkaAVROConsumer extends App {
       .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
 
   val topicAvro = "alpakkaCountryCapitals"
+  val schema = AvroSchema[CountryCapital]
 
   val source = Consumer.committableSource(consumerSettings, Subscriptions.topics(topicAvro))
   val flow1 = Flow[ConsumerMessage.CommittableMessage[String, Array[Byte]]].map{
     msg => msg.record.value()}
   val flow2 = Flow[Array[Byte]].map{ array =>
     val bais = new ByteArrayInputStream(array)
-    val input = AvroInputStream.binary[CountryCapital](bais)
-    input.iterator.toSeq.head
+    val is = AvroInputStream.binary[CountryCapital].from(bais).build(schema)
+    is.iterator.toSeq.head
   }
   val sink = Sink.foreach[CountryCapital](println)
 

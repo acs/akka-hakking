@@ -11,5 +11,5 @@ object Dependencies {
   lazy val alpakkaFile = "com.lightbend.akka" %% "akka-stream-alpakka-file" % "2.0.2"
   lazy val alpakkaCSV = "com.lightbend.akka" %% "akka-stream-alpakka-csv" % "2.0.2"
   lazy val akkaStreams = "com.typesafe.akka" %% "akka-stream" % AkkaVersion
-  lazy val avro4s ="com.sksamuel.avro4s" %% "avro4s-core" % "1.8.0"
+  lazy val avro4s ="com.sksamuel.avro4s" %% "avro4s-core" % "3.0.0"
 }

@@ -19,6 +19,7 @@ import akka.stream.scaladsl.RunnableGraph
 import akka.stream.scaladsl.Sink
 import akka.util.ByteString
 import com.sksamuel.avro4s.AvroOutputStream
+import com.sksamuel.avro4s.AvroSchema
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.ByteArraySerializer
 
@@ -29,6 +30,7 @@ object AlpakkaKafkaAVROProducer extends App {
   implicit val actorSystem = ActorSystem()
   implicit val ec = actorSystem.dispatcher
   val topic = "alpakkaCountryCapitals"
+  val schema = AvroSchema[CountryCapital]
   // implicit val mat = ActorMaterializer()
 
   val resource = getClass.getResource("/country-list.csv")
@@ -46,9 +48,9 @@ object AlpakkaKafkaAVROProducer extends App {
   // Convert CountryCapital stream of objects into Avro Records
   val flow4 = Flow[CountryCapital].map { cc =>
     val baos = new ByteArrayOutputStream()
-    val output = AvroOutputStream.binary[CountryCapital](baos)
-    output.write(cc)
-    output.close()
+    val os = AvroOutputStream.binary[CountryCapital].to(baos).build(schema)
+    os.write(cc)
+    os.close()
     val result = baos.toByteArray
     baos.close()
     result
