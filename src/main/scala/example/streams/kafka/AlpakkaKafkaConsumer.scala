@@ -31,8 +31,9 @@ object AlpakkaKafkaConsumer extends App {
 
   val topic = "alpakkaString"
   val topicAvro = "alpakkaCountryCapitals"
+  val topicCommands = "choreography_commands"
 
-  val source = Consumer.committableSource(consumerSettings, Subscriptions.topics(topicAvro))
+  val source = Consumer.committableSource(consumerSettings, Subscriptions.topics(topicCommands))
 
   val done: Future[Done] =
     source

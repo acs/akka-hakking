@@ -1,4 +1,4 @@
-package example
+package example.actors
 
 import scala.concurrent.Await
 import scala.concurrent.Future
